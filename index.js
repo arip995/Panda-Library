@@ -1,5 +1,72 @@
 
 console.log('dj is back')
+appear();
+function appear(e){
+    let library = localStorage.getItem('library');
+    let tableBody = document.getElementById('tableBody');
+    let tableObj = [];
+    if (library==null) {
+        tableObj=[];
+    }else {
+        tableObj=JSON.parse(library);
+        
+    }
+    tableObj.forEach(function(book,index){
+        let uiString = `
+            <tr >
+                <td>${index+1}</td>
+                <td>${book.name}</td>
+                <td>${book.author}</td>
+                <td>${book.type}</td>
+                <td><button id="${index}" onclick="deleteBook(this.id)" type="button" class="btn btn-secondary">Delete</button></td>
+            </tr>
+        `;
+        tableBody.innerHTML += uiString;
+    })
+}
+
+//function to show after deletion
+// function showBook(){
+//     let library = localStorage.getItem('library');
+//     let tableBody = document.getElementById('tableBody');
+//     let tableObj = [];
+//     if (library==null) {
+//         tableObj=[];
+//     }else {
+//         tableObj=JSON.parse(library);
+        
+//     }
+//     tableObj.forEach(function(book,index){
+//         let uiString = `
+//             <tr >
+//                 <td>${index+1}</td>
+//                 <td>${book.name}</td>
+//                 <td>${book.author}</td>
+//                 <td>${book.type}</td>
+//                 <td><button id="${index}" onclick="deleteBook(this.id)" type="button" class="btn btn-secondary">Delete</button></td>
+//             </tr>
+//         `;
+//         tableBody.innerHTML += uiString;
+//     })
+// }
+
+//function to delete a book
+function deleteBook(index) {
+    let library = localStorage.getItem('library');
+    let tableObj = [];
+    if(library==null){
+        tableObj = [];
+    }
+    else{
+        tableObj=JSON.parse(library);
+    }
+    tableObj.splice(index,1);
+    localStorage.setItem('library',JSON.stringify(tableObj));
+    console.log("sfdsfgdsfdsfvd", JSON.parse(library) )
+    appear();
+}
+
+
 
 function Book(name, author, type) {
     this.name = name;
@@ -7,10 +74,38 @@ function Book(name, author, type) {
     this.type = type;
 }
 
-
 //display constructor
 function Display() {
     
+}
+Display.prototype.set = function (book) {
+    let tableBody = document.getElementById('tableBody');
+    let library = localStorage.getItem('library');
+    let tableObj = [];
+    if (library==null) {
+        tableObj=[];
+    }else {
+        tableObj=JSON.parse(library);
+        
+    }
+    tableObj.push(book);
+    localStorage.setItem('library',JSON.stringify(tableObj));
+    console.log(tableObj);
+    
+    tableObj.forEach(function(book,index){
+        if(tableObj.length-1===index){
+            let uiString = `
+                <tr >
+                    <td>${index+1}</td>
+                    <td>${book.name}</td>
+                    <td>${book.author}</td>
+                    <td>${book.type}</td>
+                    <td><button id="${index}" onclick="deleteBook(this.id)" type="button" class="btn btn-secondary">Delete</button></td>
+                </tr>
+            `;
+            tableBody.innerHTML += uiString;
+        }
+    })
 }
 
 //add methods to display prototype
@@ -85,7 +180,8 @@ function libraryFormSubmit(e) {
     // console.log(book);
     display = new Display();
     if (display.validate(book)) {
-        display.add(book);
+        display.set(book);
+        // display.add(book);
         display.clear();
         display.show("success", "Your book has been successfully added");
     }
